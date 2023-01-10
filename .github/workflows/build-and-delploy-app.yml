@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '.github/workflows/IaC.yml'
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
