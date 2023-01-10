@@ -7,6 +7,7 @@ env:
   ResourceGroup: ent-demo-rg-3
   SwaName: ent-demo-swa-3
   Location: westeurope
+  SubDomain: ent-demo
 
 jobs:
   swa-create:
@@ -32,3 +33,23 @@ jobs:
             az group create -n $ResourceGroup -l $Location
             az deployment group create --resource-group $ResourceGroup --template-file main.bicep  --parameters name=$SwaName
             az staticwebapp appsettings set --name $SwaName --resource-group $ResourceGroup --setting-name CosmosEndpoint=${{ secrets.COSMOS_ENDPOINT  }} CosmosKey=${{ secrets.COSMOS_KEY }} TodoContainerName=${{ secrets.TODO_CONTAINER_NAME }} TodoDatabaseName=${{ secrets.TODO_DATABASE_NAME }}
+
+      - name: Get SWA Hostname
+        uses: azure/CLI@v1
+        id: get-hostname
+        with:
+          inlineScript: |
+            SWA_HOSTNAME=$(az staticwebapp environment list -n $SwaName -g $ResourceGroup --query "[?name=='default'].hostname " -o tsv)
+            echo $SWA_HOSTNAME
+            echo SWA_HOSTNAME=$SWA_HOSTNAME >> $GITHUB_OUTPUT
+
+      - name: Set DNS Record
+        id: set-dns-record
+        run: Porkbun.DNS/Porkbun.DNS.MakingApp -k ${{ secrets.PORKBUN_KEY }} -s ${{ secrets.PORKBUN_SECRET }} -d $SubDomain -h ${{ steps.get-hostname.outputs.SWA_HOSTNAME }}
+
+      - name: Set Custom Domain
+        id: set-swa-custom-domain
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az staticwebapp hostname set -n $SwaName -g $ResourceGroup --hostname $SubDomain.stacy.cloud
