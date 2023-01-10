@@ -4,9 +4,9 @@ on:
   workflow_dispatch
 
 env:
-ResourceGroup: ent-demo-rg-3
-SwaName: ent-demo-swa-3
-Location: westeurope
+  ResourceGroup: ent-demo-rg-3
+  SwaName: ent-demo-swa-3
+  Location: westeurope
 
 jobs:
   swa-create:
