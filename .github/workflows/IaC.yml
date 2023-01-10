@@ -1,5 +1,5 @@
 name: Create and Setup SWA Infrastructure
-
+# Test Trigger
 on:
   workflow_dispatch
 
