@@ -31,8 +31,8 @@ jobs:
           azcliversion: 2.42.0
           inlineScript: |
             az group create -n $ResourceGroup -l $Location
-            az deployment group create --resource-group $ResourceGroup --template-file main.bicep  --parameters name=$SwaName
-            az staticwebapp appsettings set --name $SwaName --resource-group $ResourceGroup --setting-name CosmosEndpoint=${{ secrets.COSMOS_ENDPOINT  }} CosmosKey=${{ secrets.COSMOS_KEY }} TodoContainerName=${{ secrets.TODO_CONTAINER_NAME }} TodoDatabaseName=${{ secrets.TODO_DATABASE_NAME }}
+            az deployment group create --resource-group $ResourceGroup --template-file main.bicep  --parameters name=$SwaName sku=standard
+            az staticwebapp appsettings set --name $SwaName --resource-group $ResourceGroup --setting-name CosmosEndpoint=${{ secrets.COSMOS_ENDPOINT  }} CosmosKey=${{ secrets.COSMOS_KEY }} TodoContainerName=${{ secrets.TODO_CONTAINER_NAME }} TodoDatabaseName=${{ secrets.TODO_DATABASE_NAME }} AUTH0_ID=${{ secrets.AUTH0_ID }} AUTH0_SECRET=${{ secrets.AUTH0_SECRET }}
 
       - name: Get SWA Hostname
         uses: azure/CLI@v1
