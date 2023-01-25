@@ -7,7 +7,7 @@ env:
   ResourceGroup: ent-demo-rg-3
   SwaName: ent-demo-swa-3
   Location: westeurope
-  SubDomain: ent-demo
+  SubDomain: ent-demo-backup
 
 jobs:
   swa-create:
