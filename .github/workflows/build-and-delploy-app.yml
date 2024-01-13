@@ -29,7 +29,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.0.x'
+          dotnet-version: '8.0.x'
           include-prerelease: false
 
       - name: 'Run Tests'
@@ -98,8 +98,6 @@ jobs:
 
       - name: Install Node
         uses: actions/setup-node@v3
-        with:
-          node-version: 16.14.2
       - name: Deploy Artifacts to SWA
         run: |
           npm install -g @azure/static-web-apps-cli
