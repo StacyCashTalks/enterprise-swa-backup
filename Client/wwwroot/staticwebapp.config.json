@@ -1,29 +1,4 @@
-{ 
-  "auth": {
-    "rolesSource": "/api/GetRoles",
-    "identityProviders": {
-      "customOpenIdConnectProviders": {
-        "auth0": {
-          "registration": {
-            "clientIdSettingName": "AUTH0_ID",
-            "clientCredential": {
-              "clientSecretSettingName": "AUTH0_SECRET"
-            },
-            "openIdConnectConfiguration": {
-              "wellKnownOpenIdConfiguration": "https://cashmore-duurkoop.eu.auth0.com/.well-known/openid-configuration"
-            }
-          },
-          "login": {
-            "nameClaimType": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
-            "scopes": [ "openid", "profile" ]
-          }
-        }
-      }
-    }
-  }, 
-  "platform": {
-    "apiRuntime": "dotnet-isolated:7.0"
-  },
+{
   "routes": [
     {
       "route": "api/todos",
