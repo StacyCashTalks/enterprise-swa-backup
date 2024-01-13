@@ -101,7 +101,7 @@ jobs:
       - name: Deploy Artifacts to SWA
         run: |
           npm install -g @azure/static-web-apps-cli
-          swa deploy -a dist-client -i dist-api --deployment-token ${{ steps.get-secret-from-cli.outputs.SWA_SECRETS }} --env ${{ steps.swa-env.outputs.ENVIRONMENT }}
+          swa deploy -a dist-client -i dist-api --deployment-token ${{ steps.get-secret-from-cli.outputs.SWA_SECRETS }} --env ${{ steps.swa-env.outputs.ENVIRONMENT }} --api-language "dotnet-isolated" --api-version "7.0"
 
       - name: Get Staging Hostname
         uses: azure/CLI@v1
