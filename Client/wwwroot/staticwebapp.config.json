@@ -1,22 +1,22 @@
 {
-  "platform": {
-    "apiRuntime": "dotnet-isolated:7.0"
-  },
-  "routes": [
-    {
-      "route": "api/todos",
-      "methods": [
-        "POST",
-        "PUT",
-        "DELETE"
-      ],
-      "allowedRoles": [
-        "authorised"
-      ]
+    "platform": {
+        "apiRuntime": "dotnet-isolated:8.0"
+      },
+    "routes": [
+      {
+        "route": "api/todos",
+        "methods": [
+          "POST",
+          "PUT",
+          "DELETE"
+        ],
+        "allowedRoles": [
+          "authorised"
+        ]
+      }
+    ],
+    "navigationFallback": {
+      "rewrite": "/index.html",
+      "exclude": [ "/images/*.{png,jpg,gif}", "/css/*" ]
     }
-  ],
-  "navigationFallback": {
-    "rewrite": "/index.html",
-    "exclude": [ "/images/*.{png,jpg,gif}", "/css/*" ]
   }
-}

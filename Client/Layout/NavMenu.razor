@@ -17,16 +17,16 @@
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/.auth/logout?post_logout_redirect_uri=/">
-                    <span class="oi oi-account-logout" aria-hidden="true"></span> @(context.User.HasClaim(c => c.Value == "authorised") ? "Super User" : "Standard User")
-                </NavLink>
+                    <NavLink class="nav-link" href="/.auth/logout?post_logout_redirect_uri=/">
+                        <span class="oi oi-account-logout" aria-hidden="true"></span> @(context.User.HasClaim(c => c.Value == "authorised") ? "Super User" : "Standard User")
+                    </NavLink>
                 </div>
             </Authorized>
             <NotAuthorized>
                 <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/.auth/login/github">
-                    <span class="oi oi-account-login" aria-hidden="true"></span> Login
-                </NavLink>
+                    <NavLink class="nav-link" href="/.auth/login/github">
+                        <span class="oi oi-account-login" aria-hidden="true"></span> Login
+                    </NavLink>
                 </div>
             </NotAuthorized>
         </AuthorizeView>
