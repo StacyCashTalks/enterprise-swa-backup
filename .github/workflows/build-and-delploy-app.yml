@@ -3,7 +3,7 @@ name: Build and Deploy Application
 on:
   push:
     branches:
-      - remake
+      - main
     paths-ignore:
       - '.github/workflows/IaC.yml'
   pull_request:
