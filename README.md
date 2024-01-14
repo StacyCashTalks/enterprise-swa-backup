@@ -1,1 +1,0 @@
-# swa-enterprise-template
