@@ -1,5 +1,3 @@
-@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
-
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -100,19 +98,6 @@ a, .btn-link {
         content: var(--blazor-load-percentage-text, "Loading");
     }
 
-.pointer {
-    cursor: pointer
-}
-
-.edit-label {
-    margin-top: 20px;
-    width: 50%;
-    min-width: 350px;
-    margin-bottom: -30px
-}
-
-@media screen and (max-width: 425px) {
-    .edit-label {
-        min-width: calc(100vw - 80px);
-    }
+code {
+    color: #c02d76;
 }

@@ -1,4 +1,4 @@
-namespace Api;
+﻿namespace Api;
 
 internal class Todos
 {
@@ -78,7 +78,8 @@ internal class Todos
         {
             await _todoHandler.UpdateTodo(todo, clientPrincipal);
         }
-        catch(ArgumentException) { 
+        catch (ArgumentException)
+        {
             return request.CreateResponse(HttpStatusCode.NotFound);
         }
 

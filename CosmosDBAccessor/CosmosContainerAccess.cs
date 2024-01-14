@@ -114,12 +114,7 @@ public class CosmosContainerAccess<T> : IDisposable, IContainerAccess<T> where T
     private async Task<Container> GetCosmosContainer()
     {
         // TODO: Lock before getting the container
-        if (_container == null)
-        {
-            _container = await CreateContainer();
-        }
-
-        return _container;
+        return _container ??= await CreateContainer();
     }
 
     private async Task<Container> CreateContainer()
