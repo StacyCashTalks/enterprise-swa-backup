@@ -25,14 +25,6 @@ jobs:
         with:
           submodules: true
 
-    # List contents of workspace
-      - name: List Contents of Workspace
-        run: ls -R
-      
-      # List contents od CosmosDBAccessor
-      - name: List Contents of CosmosDBAccessor
-        run: ls -R ./CosmosDBAccessor
-
 
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
@@ -40,120 +32,120 @@ jobs:
           dotnet-version: '8.0.x'
           include-prerelease: false
 
-      # - name: 'Run Tests'
-      #   run: dotnet test --configuration Release **/*Tests.csproj   
+      - name: 'Run Tests'
+        run: dotnet test --configuration Release **/*Tests.csproj   
 
           
       - name: Client Build
-        run: dotnet build ./CosmosDBAccessor/CosmosDBAccessor.csproj
+        run: dotnet publish ./Client/Client.csproj --output ./dist-client
 
-      # - name: Api Build
-      #   run: dotnet publish ./Api/Api.csproj --output ./dist-api
+      - name: Api Build
+        run: dotnet publish ./Api/Api.csproj --output ./dist-api
 
-      # - name: Upload Api Published Files
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: Api
-      #     path: dist-api
+      - name: Upload Api Published Files
+        uses: actions/upload-artifact@v3
+        with:
+          name: Api
+          path: dist-api
 
-      # - name: Upload Client Published Files
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: Client
-      #     path: dist-client/wwwroot
+      - name: Upload Client Published Files
+        uses: actions/upload-artifact@v3
+        with:
+          name: Client
+          path: dist-client/wwwroot
 
-  # deploy-to-swa:
-  #   runs-on: ubuntu-latest
-  #   name: Deploy
-  #   needs: build-and-test
-  #   if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-  #   steps:
-  #     - name: Download API
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: Api
-  #         path: dist-api
+  deploy-to-swa:
+    runs-on: ubuntu-latest
+    name: Deploy
+    needs: build-and-test
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    steps:
+      - name: Download API
+        uses: actions/download-artifact@v3
+        with:
+          name: Api
+          path: dist-api
 
-  #     - name: Download Client
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: Client
-  #         path: dist-client
+      - name: Download Client
+        uses: actions/download-artifact@v3
+        with:
+          name: Client
+          path: dist-client
 
-  #     - name: Azure Login
-  #       uses: azure/login@v1
-  #       with:
-  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
           
-  #     - name: Get SWA deployment token
-  #       id: get-secret-from-cli
-  #       uses: azure/CLI@v1
-  #       with:
-  #         azcliversion: 2.42.0
-  #         inlineScript: |
-  #           SWA_SECRETS=$(az staticwebapp secrets list -n $SwaName -g $ResourceGroup --query 'properties.apiKey' -o tsv )
-  #           echo "::add-mask::$SWA_SECRETS"
-  #           echo SWA_SECRETS=$SWA_SECRETS >> $GITHUB_OUTPUT
+      - name: Get SWA deployment token
+        id: get-secret-from-cli
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.42.0
+          inlineScript: |
+            SWA_SECRETS=$(az staticwebapp secrets list -n $SwaName -g $ResourceGroup --query 'properties.apiKey' -o tsv )
+            echo "::add-mask::$SWA_SECRETS"
+            echo SWA_SECRETS=$SWA_SECRETS >> $GITHUB_OUTPUT
 
-  #     - name: Set the SWA environment
-  #       id: swa-env
-  #       run: |
-  #         if [ "${{ github.event_name }}" == "push" ]; then
-  #           echo "ENVIRONMENT=production">> $GITHUB_OUTPUT
-  #         else
-  #           echo "ENVIRONMENT=staging${{ github.event.number }}">> $GITHUB_OUTPUT
-  #         fi
+      - name: Set the SWA environment
+        id: swa-env
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]; then
+            echo "ENVIRONMENT=production">> $GITHUB_OUTPUT
+          else
+            echo "ENVIRONMENT=staging${{ github.event.number }}">> $GITHUB_OUTPUT
+          fi
 
-  #     - name: Install Node
-  #       uses: actions/setup-node@v3
-  #     - name: Deploy Artifacts to SWA
-  #       run: |
-  #         npm install -g @azure/static-web-apps-cli@1.1.1
-  #         swa deploy -a dist-client -i dist-api --deployment-token ${{ steps.get-secret-from-cli.outputs.SWA_SECRETS }} --env ${{ steps.swa-env.outputs.ENVIRONMENT }}
+      - name: Install Node
+        uses: actions/setup-node@v3
+      - name: Deploy Artifacts to SWA
+        run: |
+          npm install -g @azure/static-web-apps-cli@1.1.1
+          swa deploy -a dist-client -i dist-api --deployment-token ${{ steps.get-secret-from-cli.outputs.SWA_SECRETS }} --env ${{ steps.swa-env.outputs.ENVIRONMENT }}
 
-  #     - name: Get Staging Hostname
-  #       uses: azure/CLI@v1
-  #       if: github.event_name == 'pull_request'
-  #       id: get-hostname
-  #       with:
-  #         inlineScript: |
-  #           SWA_HOSTNAME=$(az staticwebapp environment list -n $SwaName -g $ResourceGroup --query "[?contains(hostname,'${{ steps.swa-env.outputs.ENVIRONMENT }}')].hostname " -o tsv)
-  #           echo $SWA_HOSTNAME
-  #           echo SWA_HOSTNAME=$SWA_HOSTNAME >> $GITHUB_OUTPUT
+      - name: Get Staging Hostname
+        uses: azure/CLI@v1
+        if: github.event_name == 'pull_request'
+        id: get-hostname
+        with:
+          inlineScript: |
+            SWA_HOSTNAME=$(az staticwebapp environment list -n $SwaName -g $ResourceGroup --query "[?contains(hostname,'${{ steps.swa-env.outputs.ENVIRONMENT }}')].hostname " -o tsv)
+            echo $SWA_HOSTNAME
+            echo SWA_HOSTNAME=$SWA_HOSTNAME >> $GITHUB_OUTPUT
 
-  #     - name: Update Pull Request
-  #       uses: actions/github-script@v6
-  #       if: github.event_name == 'pull_request'
-  #       with:
-  #         github-token: ${{ secrets.GITHUB_TOKEN }}
-  #         script: |
-  #           const output = `#### Staging Environment Updated
+      - name: Update Pull Request
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Staging Environment Updated
 
-  #           Test here https://${{ steps.get-hostname.outputs.SWA_HOSTNAME }}
+            Test here https://${{ steps.get-hostname.outputs.SWA_HOSTNAME }}
 
-  #           *Pushed by: @${{ github.actor }}*`;
+            *Pushed by: @${{ github.actor }}*`;
 
-  #           github.rest.issues.createComment({
-  #             issue_number: context.issue.number,
-  #             owner: context.repo.owner,
-  #             repo: context.repo.repo,
-  #             body: output
-  #           })
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
 
-  # close_pull_request_job:
-  #   if: github.event_name == 'pull_request' && github.event.action == 'closed'
-  #   runs-on: ubuntu-latest
-  #   name: Close Pull Request Job
-  #   steps:
-  #     - name: Azure Login
-  #       uses: azure/login@v1
-  #       with:
-  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
+  close_pull_request_job:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request Job
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
         
-  #     - name: Remove Staging Environment
-  #       id: get-api-key
-  #       uses: azure/CLI@v1
-  #       with:
-  #         azcliversion: 2.42.0
-  #         inlineScript: |
-  #           az staticwebapp environment delete --name $SwaName --resource-group $ResourceGroup --environment-name staging${{ github.event.number }} --yes
+      - name: Remove Staging Environment
+        id: get-api-key
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.42.0
+          inlineScript: |
+            az staticwebapp environment delete --name $SwaName --resource-group $ResourceGroup --environment-name staging${{ github.event.number }} --yes
