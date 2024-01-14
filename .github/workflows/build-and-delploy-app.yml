@@ -31,21 +31,21 @@ jobs:
       
       # List contents od CosmosDBAccessor
       - name: List Contents of CosmosDBAccessor
-        run: ls -R ./Api/CosmosDBAccessor
+        run: ls -R ./CosmosDBAccessor
 
 
-      # - name: Setup .NET Core
-      #   uses: actions/setup-dotnet@v3
-      #   with:
-      #     dotnet-version: '8.0.x'
-      #     include-prerelease: false
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+           include-prerelease: false
 
       # - name: 'Run Tests'
       #   run: dotnet test --configuration Release **/*Tests.csproj   
 
           
-      # - name: Client Build
-      #   run: dotnet publish ./Client/Client.csproj --output ./dist-client
+      - name: Client Build
+        run: dotnet build ./CosmosDBAccessor/CosmosDBAccessor.csproj
 
       # - name: Api Build
       #   run: dotnet publish ./Api/Api.csproj --output ./dist-api
