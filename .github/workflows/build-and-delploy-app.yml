@@ -100,7 +100,7 @@ jobs:
         uses: actions/setup-node@v3
       - name: Deploy Artifacts to SWA
         run: |
-          npm install -g @azure/static-web-apps-cli
+          npm install -g @azure/static-web-apps-cli@1.1.1
           swa deploy -a dist-client -i dist-api --deployment-token ${{ steps.get-secret-from-cli.outputs.SWA_SECRETS }} --env ${{ steps.swa-env.outputs.ENVIRONMENT }}
 
       - name: Get Staging Hostname
