@@ -96,12 +96,27 @@ jobs:
             echo "ENVIRONMENT=staging${{ github.event.number }}">> $GITHUB_OUTPUT
           fi
 
-      - name: Install Node
-        uses: actions/setup-node@v3
-      - name: Deploy Artifacts to SWA
-        run: |
-          npm install -g @azure/static-web-apps-cli
-          swa deploy -a dist-client -i dist-api --deployment-token ${{ steps.get-secret-from-cli.outputs.SWA_SECRETS }} --env ${{ steps.swa-env.outputs.ENVIRONMENT }} -V silly
+ #     - name: Install Node
+ #       uses: actions/setup-node@v3
+ #     - name: Deploy Artifacts to SWA
+ #       run: |
+ #         npm install -g @azure/static-web-apps-cli
+ #         swa deploy -a dist-client -i dist-api --deployment-token ${{ steps.get-secret-from-cli.outputs.SWA_SECRETS }} --env ${{ steps.swa-env.outputs.ENVIRONMENT }} -V silly
+
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ steps.get-secret-from-cli.outputs.SWA_SECRETS }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          action: "upload"
+          ###### Repository/Build Configurations - These values can be configured to match you app requirements. ######
+          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+          app_location: "dist-client" # App source code path
+          api_location: "dist-api" # Api source code path - optional
+          skip_app_build: true
+          skip_api_build: true
+          ###### End of Repository/Build Configurations ######
 
       - name: Get Staging Hostname
         uses: azure/CLI@v1
